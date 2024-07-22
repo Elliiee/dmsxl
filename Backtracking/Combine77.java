@@ -14,7 +14,8 @@ class Combine77 {
             result.add(new ArrayList<>(path));
             return;
         }
-        for (int i = startIndex; i <= n; i++){
+        //we can trim the size i <= n - (k - path.size()) + 1
+        for (int i = startIndex; i <= n; i++){ 
             path.add(i);
             backtrack(n, k, i+1);
             path.removeLast();
