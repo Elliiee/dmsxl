@@ -99,11 +99,17 @@ public class SolutionDp2 {
                 // 直接从上一行先把结果抄下来，然后再修正
                 dp[i][j] = dp[i-1][j]; 
 
+                ////如果某个物品单独的重量恰好就等于背包的重量，那么也是满足dp数组的定义的
                 if (nums[i] == j){
                     dp[i][j] = true; 
                     continue; 
                 }
 
+                ////如果某个物品的重量小于j，那就可以看该物品是否放入背包
+                //dp[i - 1][j]表示该物品不放入背包，如果在 [0, i - 1] 这个子区间内已经有一部分元素，
+                //使得它们的和为 j ，那么 dp[i][j] = true；
+                //dp[i - 1][j - nums[i]]表示该物品放入背包。如果在 [0, i - 1] 这个子区间内就得找到一部分元素，
+                //使得它们的和为 j - nums[i]。
                 if (nums[i] < j){
                     dp[i][j] = dp[i-1][j] || dp[i-1][j - nums[i]];
                 }
@@ -116,5 +122,45 @@ public class SolutionDp2 {
             System.out.println();
         }
         return dp[len - 1][target];
+     }
+
+     public boolean canPartition3(int[] nums){
+        int len = nums.length;
+        if (len == 0) return false; 
+        int sum = 0; 
+        for (int num : nums) sum += num; 
+        
+        if (sum % 2 == 1) return false; 
+
+        int target = sum / 2;
+        int[][] dp = new int[len][target + 1];
+
+        // for(int j = 0; j <= target; j++){
+        //     if(j < nums[0])
+        //         dp[0][j] = 0;
+        //     else
+        //         dp[0][j] = nums[0];
+        // }
+
+        //initialize dp array 
+        for (int j = nums[0]; j <= target; j++)
+            dp[0][j] = nums[0];
+        
+
+        for (int i = 1; i < len; i++){
+            for (int j = 0; j <= target; j++){
+                if (j < nums[i])
+                    dp[i][j] = dp[i-1][j];
+                else
+                    dp[i][j] = Math.max(dp[i-1][j], dp[i-1][j-nums[i]] + nums[i]);
+            }
+        }
+
+        //print out DP array
+        // for(int x : dp){
+        //     System.out.print(x + ",");
+        // }
+        // System.out.print("    "+i+" row"+"\n");
+        return dp[len - 1][target] == target;
      }
 }
